@@ -1,0 +1,7 @@
+GAN: https://habr.com/ru/companies/otus/articles/569858/
+     https://github.com/ttchengab/MnistGAN
+
+GNN: https://www.geeksforgeeks.org/graph-neural-networks-with-pytorch/
+
+
+TRF: https://vc.ru/u/1389654-machine-learning/680844-sozdayte-svoyu-sobstvennuyu-model-transformer-s-nulya-s-pomoshchyu-pytorch
