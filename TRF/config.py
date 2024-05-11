@@ -3,18 +3,18 @@ from pathlib import Path
 
 def get_config():
     return {
-        "batch_size": 6,  # кол. параметров в итерации
-        "num_epochs": 30,  # Кол. эпох
+        "batch_size": 6,  # Parameters
+        "num_epochs": 30,  
         "lr": 10**-4,
-        "seq_len": 350,  # Размерность последовательности
-        "d_model": 512,  # Размерность модели
-        "datasource": "opus_books",  # Источник данных
-        "lang_src": "en",  # Перевод с (с русского нельзя в этом словаре)
-        "lang_tgt": "ru",  # Перевод на
-        "model_folder": "weights",  # Куда сохранить
-        "model_basename": "tmodel_",  # Префикс
-        "preload": None,  # Версия "latest" | None
-        "tokenizer_file": "tokenizer_{0}.json",  # Файл с токенами языка
+        "seq_len": 350,  # Max Tokens
+        "d_model": 512,  # Embedding size / Matrix size
+        "datasource": "opus_books",  # Dataset source
+        "lang_src": "en",  # (Missing RU)
+        "lang_tgt": "ru",  
+        "model_folder": "weights",  # Save point
+        "model_basename": "tmodel_", 
+        "preload": "latest",  # "latest" | None
+        "tokenizer_file": "tokenizer_{0}.json",  # Token file
         "experiment_name": "runs/tmodel",
     }
 

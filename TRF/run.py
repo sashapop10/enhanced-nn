@@ -5,19 +5,14 @@ from tokenizers import Tokenizer
 from datasets import load_dataset
 from dataset import BilingualDataset
 import torch
-import sys
 
 
 def translate(sentence: str):
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print("Using device:", device)
     config = get_config()
-    tokenizer_src = Tokenizer.from_file(
-        str(Path(config["tokenizer_file"].format(config["lang_src"])))
-    )
-    tokenizer_tgt = Tokenizer.from_file(
-        str(Path(config["tokenizer_file"].format(config["lang_tgt"])))
-    )
+    tokenizer_src = Tokenizer.from_file(str(Path(config["tokenizer_file"].format(config["lang_src"]))))
+    tokenizer_tgt = Tokenizer.from_file(str(Path(config["tokenizer_file"].format(config["lang_tgt"]))))
 
     model = build_transformer(
         tokenizer_src.get_vocab_size(),
@@ -58,19 +53,16 @@ def translate(sentence: str):
     with torch.no_grad():
         # Precompute the encoder output and reuse it for every generation step
         source = tokenizer_src.encode(sentence)
-        source = torch.cat(
-            [
-                torch.tensor([tokenizer_src.token_to_id("[SOS]")], dtype=torch.int64),
-                torch.tensor(source.ids, dtype=torch.int64),
-                torch.tensor([tokenizer_src.token_to_id("[EOS]")], dtype=torch.int64),
-                torch.tensor(
-                    [tokenizer_src.token_to_id("[PAD]")]
-                    * (seq_len - len(source.ids) - 2),
-                    dtype=torch.int64,
-                ),
-            ],
-            dim=0,
-        ).to(device)
+        source = torch.cat([
+            torch.tensor([tokenizer_src.token_to_id("[SOS]")], dtype=torch.int64),
+            torch.tensor(source.ids, dtype=torch.int64),
+            torch.tensor([tokenizer_src.token_to_id("[EOS]")], dtype=torch.int64),
+            torch.tensor(
+                [tokenizer_src.token_to_id("[PAD]")]
+                * (seq_len - len(source.ids) - 2),
+                dtype=torch.int64,
+            ),
+        ], dim=0).to(device)
         source_mask = (
             (source != tokenizer_src.token_to_id("[PAD]"))
             .unsqueeze(0)
@@ -112,16 +104,13 @@ def translate(sentence: str):
             # project next token
             prob = model.project(out[:, -1])
             _, next_word = torch.max(prob, dim=1)
-            decoder_input = torch.cat(
-                [
-                    decoder_input,
-                    torch.empty(1, 1)
-                    .type_as(source)
-                    .fill_(next_word.item())
-                    .to(device),
-                ],
-                dim=1,
-            )
+            decoder_input = torch.cat([
+                decoder_input,
+                torch.empty(1, 1)
+                .type_as(source)
+                .fill_(next_word.item())
+                .to(device),
+            ], dim=1)
 
             # print the translated word
             print(f"{tokenizer_tgt.decode([next_word.item()])}", end=" ")
@@ -134,5 +123,9 @@ def translate(sentence: str):
     return tokenizer_tgt.decode(decoder_input[0].tolist())
 
 
-# read sentence from argument
-translate(sys.argv[1] if len(sys.argv) > 1 else 123)
+if __name__ == "__main__":
+    while True:
+        data = input("\nSource: ")
+        translate(data)
+
+

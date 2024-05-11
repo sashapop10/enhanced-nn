@@ -1,2 +1,4 @@
 mnist
 data
+__pycache__
+runs
